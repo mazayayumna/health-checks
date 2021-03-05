@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!C:/Users/yumong/AppData/Local/Programs/Python/Python38/python.exe
 
 import os
 import shutil
@@ -8,7 +8,7 @@ def check_reboot():
     """Returns True if the computer has a pending reboot"""
     return os.path.exists("/run/reboot-required")
 
-def check_disk_full(dis, min_gb, min_percent):
+def check_disk_full(disk, min_gb, min_percent):
     """Returns True if there isnt enough space, False otherwise"""
     du = shutil.disk_usage(disk)
     # Calculate the percentage of free space
@@ -19,12 +19,16 @@ def check_disk_full(dis, min_gb, min_percent):
         return True
     return False
 
+def check_root_full():
+    """Returns True if the root partition full, False otherwise"""
+    return check_disk_full(disk="/", min_gb=2, min_percent=10)
+
 def main():
     if check_reboot():
         print("Pending Reboot.")
         sys.exit(1)
-    if check_disk_full(disk="/",min_gb=2, min_percent=10):
-        print("Disk full.")
+    if check_root_full():
+        print("Root partition full.")
         sys.exit(1)
 
     print("Everything OK")
